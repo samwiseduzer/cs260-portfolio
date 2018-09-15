@@ -1,0 +1,22 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "### Basic HTML programming expertise is an important skill for Computer Science graduates.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BYUCS260/Lab1-Portfolio.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BYUCS260/Lab1-Portfolio/issues"
+  },
+  "homepage": "https://github.com/BYUCS260/Lab1-Portfolio#readme",
+  "dependencies": {
+    "font-awesome": "^4.7.0"
+  }
+}
