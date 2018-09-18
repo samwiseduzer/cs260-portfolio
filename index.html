@@ -15,7 +15,7 @@
 <body>
 	<navbar>
 		<span class="me">Sam Duzett</span>
-		<span nav-to="intro" class="active">Intro</span>
+		<span nav-to="intro">Intro</span>
 		<span nav-to="projects">Projects</span>
 		<span nav-to="work">Work</span>
 		<links class="links">
@@ -28,79 +28,11 @@
 		</links>
 	</navbar>
 	<subnavbar>
-		<span nav-to="intro" style="font-weight:600;">Intro</span>
+		<span nav-to="intro">Intro</span>
 		<span nav-to="projects">Projects</span>
 		<span nav-to="work">Work</span>
 	</subnavbar>
-	<div id="content">
-		<div id="intro" class="selected" page>
-			<div>
-				<h2>Who Is This Guy?</h2>
-				<p>I'm a Software Engineer studying Computer Science at BYU. I've been working professionally for the last five
-					years and currently work for TechCyte, a Medical Machine Learning company that helps pathologists analyze cell
-					slides.</p>
-			</div>
-			<div>
-				<h2>What does he want?</h2>
-				<p>Dr. Pepper</p>
-			</div>
-			<div>
-				<h2>What does he need?</h2>
-				<p>Your love</p>
-			</div>
-		</div>
-		<div id="projects" page>
-			<card>
-				<a href="../samples/sample1/index.html">
-					<h4>Project 1</h4>
-					<p>Some description here</p>
-					<img src="assets/frollo.jpeg" />
-				</a>
-			</card>
-			<card>
-				<a href="../samples/sample2/index.html">
-					<h4>Project 2</h4>
-					<p>Some description here</p>
-					<img src="assets/hades.jpeg" />
-				</a>
-			</card>
-			<card>
-				<a href="../samples/sample3/index.html">
-					<h4>Project 3</h4>
-					<p>Some description here</p>
-					<img src="assets/jafar.jpeg" />
-				</a>
-			</card>
-		</div>
-		<div id="work" page>
-			<h2>Work Experience</h2>
-			<div>
-				<div class="employers">
-					<h3>Employers</h3>
-					<ul>
-						<li>Techcyte</li>
-						<li>Prototypal Solutions</li>
-						<li>Anglepoint</li>
-						<li>Jolt/Intuiplan</li>
-						<li>World Tech Academy</li>
-						<li>Brevium</li>
-						<li>MTC</li>
-					</ul>
-				</div>
-				<div class="skills">
-					<h3>Skills</h3>
-					<ol>
-						<li>Node/Javascript</li>
-						<li>C#/Java</li>
-						<li>Python,Bash</li>
-						<li>SQL</li>
-						<li>Mongo</li>
-						<li>AWS</li>
-					</ol>
-				</div>
-			</div>
-		</div>
-	</div>
+	<router id="content"></router>
 	<footer>
 		<span>&copy; Sam Duzett</span>
 		<span>samuel.duzett@gmail.com</span>

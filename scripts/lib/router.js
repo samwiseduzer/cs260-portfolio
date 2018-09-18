@@ -1,17 +1,6 @@
-// inject stylesheet
-(function() {
-	var style = document.createElement('style');
-	// WebKit hack :(
-	style.appendChild(document.createTextNode(''));
-	style.innerHTML =
-		'[page] { display:none; } [page]:not(.selected) { display:none; }';
-	// Add the <style> element to the page
-	document.head.appendChild(style);
-})();
-
 var Router = (function() {
 	let navBtns;
-	let pages;
+	let container;
 
 	let Router = {
 		current: null,
@@ -21,6 +10,10 @@ var Router = (function() {
 		config: function(options) {
 			this.default = options.default || options.root || this.root;
 			Object.assign(options, this);
+			defineSpinner(
+				options.spinner ? options.spinner.color : undefined,
+				options.spinner ? options.spinner.background : undefined
+			);
 			return this;
 		},
 		add: function(options) {
@@ -48,6 +41,14 @@ var Router = (function() {
 			options.params = params;
 
 			this.routes[options.path] = options;
+			if (options.template) {
+				this.routes[options.path].promise = getFile(options.template).then(
+					data => {
+						this.routes[options.path].html = data;
+					}
+				);
+			}
+
 			return this;
 		},
 		navigate: function(options) {
@@ -115,8 +116,30 @@ var Router = (function() {
 			window.location.href =
 				window.location.href.replace(/#(.*)$/, '') + '#' + this.current.path;
 
-			changePage(this.current.name);
-			this.current.route.handler();
+			if (this.current.route.resolver) {
+				this.showLoader();
+				let promises = [this.current.route.promise];
+				let names = ['html'];
+				for (let name in this.current.route.resolver) {
+					promises.push(this.current.route.resolver[name](this.current));
+					names.push(name);
+				}
+				Promise.all(promises).then(results => {
+					this.current.resolver = {};
+					for (let i = 1; i < names.length; i++) {
+						this.current.resolver[names[i]] = results[i];
+					}
+					this.hideLoader();
+					changePage(this.current.name);
+					this.current.route.handler(this.current);
+				});
+			} else {
+				this.current.route.promise.then(() => {
+					changePage(this.current.name);
+					this.current.route.handler(this.current);
+				});
+			}
+
 			return this;
 		},
 		isValidPath: function(path) {
@@ -126,6 +149,16 @@ var Router = (function() {
 				}
 			}
 			return false;
+		},
+		showLoader: function() {
+			if (document.querySelector('loader')) {
+				document.querySelector('loader').style.display = 'inline-block';
+			} else {
+				container.innerHTML = '<loader class="router-loader"></loader>';
+			}
+		},
+		hideLoader: function() {
+			document.querySelector('loader').style.display = 'none';
 		}
 	};
 
@@ -136,33 +169,38 @@ var Router = (function() {
 	return Router;
 
 	function handleRouteChange(event) {
-		let queryIdx = window.location.hash.indexOf('?');
-		let hash = window.location.hash.slice(
-			1,
-			queryIdx !== -1 ? queryIdx : undefined
-		);
-		let query;
+		if (
+			!Router.current ||
+			window.location.hash.slice(1) !== Router.current.path
+		) {
+			let queryIdx = window.location.hash.indexOf('?');
+			let hash = window.location.hash.slice(
+				1,
+				queryIdx !== -1 ? queryIdx : undefined
+			);
+			let query;
 
-		let urlQuery = window.location.hash.match(/\?.*$/);
-		if (urlQuery && urlQuery.length) {
-			let search = new URLSearchParams(urlQuery[0].slice(1));
-			let keys = search.keys();
-			query = { values: {}, string: search.toString() };
-			for (let key of keys) {
-				query.values[key] = search.get(key);
+			let urlQuery = window.location.hash.match(/\?.*$/);
+			if (urlQuery && urlQuery.length) {
+				let search = new URLSearchParams(urlQuery[0].slice(1));
+				let keys = search.keys();
+				query = { values: {}, string: search.toString() };
+				for (let key of keys) {
+					query.values[key] = search.get(key);
+				}
 			}
-		}
 
-		if (Router.isValidPath(hash.trim())) {
-			Router.navigate({ path: hash, queryURL: query });
-		} else {
-			Router.navigate({ default: true });
+			if (Router.isValidPath(hash.trim())) {
+				Router.navigate({ path: hash, queryURL: query });
+			} else {
+				Router.navigate({ default: true });
+			}
 		}
 	}
 
 	function initRouteListeners() {
 		navBtns = document.querySelectorAll('[nav-to]');
-		pages = document.querySelectorAll('[page]');
+		container = document.querySelector('router');
 		// setup listeners & navigation system
 		forEach(navBtns, el => {
 			el.addEventListener('click', event => {
@@ -178,13 +216,6 @@ var Router = (function() {
 	}
 
 	function changePage(page) {
-		forEach(pages, el => {
-			if (el.getAttribute('id') === page) {
-				el.classList.add('selected');
-			} else {
-				el.classList.remove('selected');
-			}
-		});
 		forEach(navBtns, el => {
 			if (el.getAttribute('nav-to') === page) {
 				el.classList.add('active');
@@ -192,8 +223,45 @@ var Router = (function() {
 				el.classList.remove('active');
 			}
 		});
+		container.innerHTML = Router.current.route.html;
 	}
 
-	// connect to html to change routes
-	// preload & cache template paths as part of add()
+	function getFile(url) {
+		return new Promise(function(resolve, reject) {
+			fetch(url)
+				.then(res => {
+					resolve(res.text());
+				})
+				.catch(function(err) {
+					console.log('err:', err);
+					reject(err);
+				});
+		});
+	}
+
+	function defineSpinner(color, background) {
+		background = background || '#f3f3f3';
+		color = color || '#ccc';
+		let style = document.createElement('style');
+		style.innerHTML = `
+			.router-loader {
+				border: 16px solid ${background}; /* Light Grey */
+				border-top: 16px solid ${color}; /* Darker Grey */
+				border-radius: 50%;
+				width: 120px;
+				height: 120px;
+				animation: spin 2s linear infinite;
+				display:flex;
+				justify-self: center;
+				align-self: center;
+			}
+	
+			@keyframes spin {
+					0% { transform: rotate(0deg); }
+					100% { transform: rotate(360deg); }
+			}`;
+		document.head.appendChild(style);
+	}
 })();
+
+// how to handle loading?

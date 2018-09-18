@@ -1,16 +1,18 @@
 /* Navigation */
 
-#intro.selected {
-    display: flex;
+#intro {
+	display: flex;
 }
 
-#projects.selected {
-    display: flex;
+#projects {
+	display: flex;
 }
 
-#work.selected {
-    display: flex;
+#work {
+	display: flex;
 }
+
+.active { font-weight:600; }
 
 /* Overall Page Structure */
 
@@ -224,5 +226,3 @@ footer {
         flex-direction: column;
     }
 }
-
-.active { font-weight:600; }

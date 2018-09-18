@@ -1,33 +1,50 @@
-Router.config({ root: '/', default: '/intro' })
+Router.config({
+	root: '/',
+	default: '/intro'
+})
 	.add({
 		name: 'prod',
 		path: '/products/{prodId}/edit/{prod2Id}',
-		handler: function() {
-			console.log('prod');
-			console.log('current:', Router.current);
+		template: '/templates/test.html',
+		handler: function(route) {
+			console.log('route:', route);
+		},
+		resolver: {
+			blah: route =>
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						resolve('blah1');
+					}, 1000);
+				}),
+			blah2: route =>
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						resolve('blah2');
+					}, 2000);
+				})
 		}
 	})
 	.add({
 		name: 'intro',
 		path: '/intro',
-		handler: function() {
-			console.log('intro');
-			console.log('current:', Router.current);
+		template: '/templates/intro.html',
+		handler: function(route) {
+			console.log('route:', route);
 		}
 	})
 	.add({
 		name: 'projects',
 		path: '/projects',
-		handler: function() {
-			console.log('projects');
-			console.log('current:', Router.current);
+		template: '/templates/projects.html',
+		handler: function(route) {
+			console.log('route:', route);
 		}
 	})
 	.add({
 		name: 'work',
 		path: '/work',
-		handler: function() {
-			console.log('work');
-			console.log('current:', Router.current);
+		template: '/templates/work.html',
+		handler: function(route) {
+			console.log('route:', route);
 		}
 	});
