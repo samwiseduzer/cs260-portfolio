@@ -90,7 +90,7 @@ subnavbar {
     background-color: #eee;
 }
 
-#content>[page] {
+#content>* {
     max-width: 100vw;
     align-content: flex-start;
     padding: 10px 5px;

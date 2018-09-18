@@ -1,5 +1,4 @@
 Router.config({
-	root: '/',
 	default: '/intro'
 })
 	.add({

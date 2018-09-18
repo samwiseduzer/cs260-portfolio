@@ -5,10 +5,16 @@ var Router = (function() {
 	let Router = {
 		current: null,
 		routes: {},
-		root: '/',
+		root: (
+			window.location.protocol +
+			'//' +
+			window.location.host +
+			window.location.pathname
+		).slice(0, -1),
 		default: '/',
 		config: function(options) {
 			this.default = options.default || options.root || this.root;
+			this.root = options.root || this.root;
 			Object.assign(options, this);
 			defineSpinner(
 				options.spinner ? options.spinner.color : undefined,
@@ -228,7 +234,7 @@ var Router = (function() {
 
 	function getFile(url) {
 		return new Promise(function(resolve, reject) {
-			fetch(url)
+			fetch(Router.root + url)
 				.then(res => {
 					resolve(res.text());
 				})
@@ -264,4 +270,8 @@ var Router = (function() {
 	}
 })();
 
-// how to handle loading?
+// add templating to .html files
+//     raw values
+//     basic directives, such as repeats
+
+// nested routes? NAH!!!
