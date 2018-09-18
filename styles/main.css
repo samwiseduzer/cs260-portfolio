@@ -1,15 +1,15 @@
 /* Navigation */
 
-#intro {
+#intro.selected {
     display: flex;
 }
 
-#projects {
-    display: none;
+#projects.selected {
+    display: flex;
 }
 
-#work {
-    display: none;
+#work.selected {
+    display: flex;
 }
 
 /* Overall Page Structure */
@@ -88,7 +88,7 @@ subnavbar {
     background-color: #eee;
 }
 
-#content>.page {
+#content>[page] {
     max-width: 100vw;
     align-content: flex-start;
     padding: 10px 5px;
@@ -203,7 +203,7 @@ footer {
 
 /* Responsiveness */
 
-@media(max-width:360px) {
+@media(max-width:480px) {
     body {
         grid-template-rows: 40px 20px 1fr 20px;
         grid-template-areas: "header" "subheader" "content" "footer";
@@ -224,3 +224,5 @@ footer {
         flex-direction: column;
     }
 }
+
+.active { font-weight:600; }
