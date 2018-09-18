@@ -4,8 +4,14 @@ Router.config({
 	.add({
 		name: 'prod',
 		path: '/products/{prodId}/edit/{prod2Id}',
-		template: '/templates/test.html',
-		handler: function(route) {
+		templateURL: '/templates/test.html',
+		prerender: function(route) {
+			console.log("hi - I'm prerender");
+			this.blah = 'hello, sir';
+			this.blahs = [1, 2, 3, 4, 5];
+			this.apple = route.params.prodId;
+		},
+		controller: function(route) {
 			console.log('route:', route);
 		},
 		resolver: {
@@ -19,31 +25,31 @@ Router.config({
 				new Promise((resolve, reject) => {
 					setTimeout(() => {
 						resolve('blah2');
-					}, 2000);
+					}, 500);
 				})
 		}
 	})
 	.add({
 		name: 'intro',
 		path: '/intro',
-		template: '/templates/intro.html',
-		handler: function(route) {
+		templateURL: '/templates/intro.html',
+		controller: function(route) {
 			console.log('route:', route);
 		}
 	})
 	.add({
 		name: 'projects',
 		path: '/projects',
-		template: '/templates/projects.html',
-		handler: function(route) {
+		templateURL: '/templates/projects.html',
+		controller: function(route) {
 			console.log('route:', route);
 		}
 	})
 	.add({
 		name: 'work',
 		path: '/work',
-		template: '/templates/work.html',
-		handler: function(route) {
+		templateURL: '/templates/work.html',
+		controller: function(route) {
 			console.log('route:', route);
 		}
 	});

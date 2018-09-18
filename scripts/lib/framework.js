@@ -47,10 +47,10 @@ var Router = (function() {
 			options.params = params;
 
 			this.routes[options.path] = options;
-			if (options.template) {
-				this.routes[options.path].promise = getFile(options.template).then(
+			if (options.templateURL) {
+				this.routes[options.path].promise = getFile(options.templateURL).then(
 					data => {
-						this.routes[options.path].html = data;
+						this.routes[options.path].template = data;
 					}
 				);
 			}
@@ -135,14 +135,16 @@ var Router = (function() {
 					for (let i = 1; i < names.length; i++) {
 						this.current.resolver[names[i]] = results[i];
 					}
+					this.renderHTML();
 					this.hideLoader();
 					changePage(this.current.name);
-					this.current.route.handler(this.current);
+					this.current.route.controller(this.current);
 				});
 			} else {
 				this.current.route.promise.then(() => {
+					this.renderHTML();
 					changePage(this.current.name);
-					this.current.route.handler(this.current);
+					this.current.route.controller(this.current);
 				});
 			}
 
@@ -165,6 +167,15 @@ var Router = (function() {
 		},
 		hideLoader: function() {
 			document.querySelector('loader').style.display = 'none';
+		},
+		renderHTML: function() {
+			let bound = {};
+			if (this.current.route.prerender) {
+				this.current.route.prerender.bind(bound)(this.current);
+			}
+			this.current.route.html = Handlebars.compile(this.current.route.template)(
+				bound
+			);
 		}
 	};
 
@@ -269,9 +280,3 @@ var Router = (function() {
 		document.head.appendChild(style);
 	}
 })();
-
-// add templating to .html files
-//     raw values
-//     basic directives, such as repeats
-
-// nested routes? NAH!!!
